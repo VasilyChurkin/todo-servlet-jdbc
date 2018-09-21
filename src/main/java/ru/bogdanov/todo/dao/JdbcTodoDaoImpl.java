@@ -10,6 +10,13 @@ import java.util.List;
  */
 public class JdbcTodoDaoImpl implements TodoDao {
 
+    public static final String userName = "root";
+    public static final String password = "????";
+
+
+
+
+
     @Override
     public void add(Todo todo) {
 
