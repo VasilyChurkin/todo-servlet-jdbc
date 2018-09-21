@@ -1,3 +1,3 @@
 # todo
 
-Simple CRUD web-app using Servlet and JDBC.
+Simple CRUD web-app using Servlet, JDBC and JSP.
