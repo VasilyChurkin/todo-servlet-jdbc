@@ -49,19 +49,16 @@ public class TodoServlet extends HttpServlet {
                 requestDispatcher = request.getRequestDispatcher("todo-list.jsp");
                 break;
             case "addTodo":
-                String todoName = request.getParameter("todoName");
-                String todoDescription = request.getParameter("todoDescription");
-                todoService.add(new Todo(todoName, todoDescription));
-                request.setAttribute("allTodos", todoService.getAll());
+                add(request);
                 requestDispatcher = request.getRequestDispatcher("todo-list.jsp");
                 break;
             case "show":
-                id = Long.valueOf(request.getParameter("id"));
+                id = getId(request);
                 request.setAttribute("todoForJsp", todoService.findById(id));
                 requestDispatcher = request.getRequestDispatcher("todo-with-description.jsp");
                 break;
             case "updateTodo":
-                id = Long.valueOf(request.getParameter("id"));
+                id = getId(request);
                 String description = request.getParameter("description");
                 Todo todoForUpdate = todoService.findById(id);
                 todoForUpdate.setDescription(description);
@@ -70,7 +67,7 @@ public class TodoServlet extends HttpServlet {
                 requestDispatcher = request.getRequestDispatcher("todo-with-description.jsp");
                 break;
             case "remove":
-                id = Long.valueOf(request.getParameter("id"));
+                id = getId(request);
                 todoService.deleteById(id);
                 request.setAttribute("allTodos", todoService.getAll());
                 requestDispatcher = request.getRequestDispatcher("todo-list.jsp");
@@ -83,5 +80,16 @@ public class TodoServlet extends HttpServlet {
         }
 
         requestDispatcher.forward(request, response);
+    }
+
+    private Long getId(HttpServletRequest request) {
+        return Long.valueOf(request.getParameter("id"));
+    }
+
+    private void add(HttpServletRequest request) {
+        String todoName = request.getParameter("todoName");
+        String todoDescription = request.getParameter("todoDescription");
+        todoService.add(new Todo(todoName, todoDescription));
+        request.setAttribute("allTodos", todoService.getAll());
     }
 }
