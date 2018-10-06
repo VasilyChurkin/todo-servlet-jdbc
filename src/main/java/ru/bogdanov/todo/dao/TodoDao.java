@@ -16,6 +16,7 @@ public interface TodoDao {
 
     Collection<Todo> getAll();
 
+
     void update(Todo todo);
 
     void deleteById(Long id);

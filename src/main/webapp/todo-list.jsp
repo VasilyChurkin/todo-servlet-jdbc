@@ -43,6 +43,7 @@
     <c:forEach items="${allTodos}" var="todo">
       <li>
         <a href="todo?id=${todo.id}&action=remove" style="color:red">X</a>
+        <a href="todo?id=${todo.id}&action=show">${todo.id}</a>
         <a href="todo?id=${todo.id}&action=show">${todo.name}</a></li>
     </c:forEach>
   </ul>

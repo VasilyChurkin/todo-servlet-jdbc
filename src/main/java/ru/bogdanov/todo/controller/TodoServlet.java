@@ -1,6 +1,7 @@
 package ru.bogdanov.todo.controller;
 
 import ru.bogdanov.todo.dao.InMemoryTodoDaoImpl;
+import ru.bogdanov.todo.dao.JdbcTodoDaoImpl;
 import ru.bogdanov.todo.dao.TodoDao;
 import ru.bogdanov.todo.model.Todo;
 
@@ -25,11 +26,22 @@ public class TodoServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        todoDao = new InMemoryTodoDaoImpl();
+        //todoDao = new InMemoryTodoDaoImpl();
+        todoDao = new JdbcTodoDaoImpl();
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        try {
+            Class.forName("com.mysql.jdbc.Driver").newInstance();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
 
         String action = request.getParameter("action");
         if (action == null) {
