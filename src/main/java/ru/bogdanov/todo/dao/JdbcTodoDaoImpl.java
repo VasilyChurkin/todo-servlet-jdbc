@@ -10,12 +10,9 @@ import java.util.*;
  */
 public class JdbcTodoDaoImpl implements TodoDao {
 
-    private static long currentID = 0;
-    //public static Map<Long, Todo> newCollection = new HashMap<>();
-
     public static final String URL = "jdbc:mysql://localhost:3306/vasya_database?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&useSSL=false";
-    public static final String USER_NAME = "root";
-    public static final String PASSWORD = "21122015";
+    public static final String USER_NAME = "dbo";
+    public static final String PASSWORD = "dbo";
 
     public static final String SELECT_ALL = "select * from todo;";
     public static final String ADD_NEW = "insert into todo (name, description) values (?, ?);";

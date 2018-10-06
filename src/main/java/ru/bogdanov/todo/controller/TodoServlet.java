@@ -1,9 +1,8 @@
 package ru.bogdanov.todo.controller;
 
-import ru.bogdanov.todo.dao.InMemoryTodoDaoImpl;
-import ru.bogdanov.todo.dao.JdbcTodoDaoImpl;
-import ru.bogdanov.todo.dao.TodoDao;
 import ru.bogdanov.todo.model.Todo;
+import ru.bogdanov.todo.service.TodoService;
+import ru.bogdanov.todo.service.TodoServiceImpl;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -12,7 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -20,14 +18,14 @@ import java.util.List;
  */
 public class TodoServlet extends HttpServlet {
 
-    private TodoDao todoDao;
+    private TodoService todoService;
 
     List<String> list = new ArrayList<>();
 
     @Override
     public void init() throws ServletException {
         //todoDao = new InMemoryTodoDaoImpl();
-        todoDao = new JdbcTodoDaoImpl();
+        todoService = new TodoServiceImpl();
     }
 
     @Override
@@ -35,11 +33,7 @@ public class TodoServlet extends HttpServlet {
 
         try {
             Class.forName("com.mysql.jdbc.Driver").newInstance();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -52,38 +46,38 @@ public class TodoServlet extends HttpServlet {
 
         switch (action) {
             case "search":
-                request.setAttribute("allTodos", todoDao.search(request.getParameter("find")));
+                request.setAttribute("allTodos", todoService.search(request.getParameter("find")));
                 requestDispatcher = request.getRequestDispatcher("todo-list.jsp");
                 break;
             case "addTodo":
                 String todoName = request.getParameter("todoName");
                 String todoDescription = request.getParameter("todoDescription");
-                todoDao.add(new Todo(todoName, todoDescription));
-                request.setAttribute("allTodos", todoDao.getAll());
+                todoService.add(new Todo(todoName, todoDescription));
+                request.setAttribute("allTodos", todoService.getAll());
                 requestDispatcher = request.getRequestDispatcher("todo-list.jsp");
                 break;
             case "show":
                 id = Long.valueOf(request.getParameter("id"));
-                request.setAttribute("todoForJsp", todoDao.findById(id));
+                request.setAttribute("todoForJsp", todoService.findById(id));
                 requestDispatcher = request.getRequestDispatcher("todo-with-description.jsp");
                 break;
             case "updateTodo":
                 id = Long.valueOf(request.getParameter("id"));
                 String description = request.getParameter("description");
-                Todo todoForUpdate = todoDao.findById(id);
+                Todo todoForUpdate = todoService.findById(id);
                 todoForUpdate.setDescription(description);
-                todoDao.update(todoForUpdate);
+                todoService.update(todoForUpdate);
                 request.setAttribute("todoForJsp", todoForUpdate);
                 requestDispatcher = request.getRequestDispatcher("todo-with-description.jsp");
                 break;
             case "remove":
                 id = Long.valueOf(request.getParameter("id"));
-                todoDao.deleteById(id);
-                request.setAttribute("allTodos", todoDao.getAll());
+                todoService.deleteById(id);
+                request.setAttribute("allTodos", todoService.getAll());
                 requestDispatcher = request.getRequestDispatcher("todo-list.jsp");
                 break;
             default:
-                request.setAttribute("allTodos", todoDao.getAll());
+                request.setAttribute("allTodos", todoService.getAll());
                 requestDispatcher = request.getRequestDispatcher("todo-list.jsp");
                 break;
 
