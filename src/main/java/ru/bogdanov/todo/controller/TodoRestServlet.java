@@ -19,7 +19,8 @@ import java.io.PrintWriter;
 @WebServlet("/rest")
 public class TodoRestServlet extends HttpServlet {
 
-    private TodoService todoService = new TodoServiceImpl();
+    private TodoService todoService = TodoServiceImpl.getInstance();
+
     static ObjectMapper mapper = new ObjectMapper();
 
     @Override

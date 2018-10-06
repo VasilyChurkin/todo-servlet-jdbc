@@ -8,6 +8,8 @@ import java.util.*;
 /**
  * Denis, 22.09.2018
  */
+// TODO - сделать JdbcTodoDaoImpl синглтоном
+// TODO - правильно закрыть ресурсы (Connection, Statement, ResultSet)
 public class JdbcTodoDaoImpl implements TodoDao {
 
     public static final String URL = "jdbc:mysql://localhost:3306/vasya_database?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&useSSL=false";
@@ -27,12 +29,12 @@ public class JdbcTodoDaoImpl implements TodoDao {
     public void add(Todo todo) {
         try {
             Connection connection = DriverManager.getConnection(URL, USER_NAME, PASSWORD);
-            PreparedStatement prst = connection.prepareStatement(ADD_NEW);
-            prst.setString(1, todo.getName());
-            prst.setString(2, todo.getDescription());
-            prst.executeUpdate();
+            PreparedStatement ps = connection.prepareStatement(ADD_NEW);
+            ps.setString(1, todo.getName());
+            ps.setString(2, todo.getDescription());
+            ps.executeUpdate();
 
-            prst.close();
+            ps.close();
             connection.close();
         }
         catch (SQLException e) {
@@ -46,15 +48,15 @@ public class JdbcTodoDaoImpl implements TodoDao {
         Todo todo = null;
         try {
             Connection connection = DriverManager.getConnection(URL, USER_NAME, PASSWORD);
-            PreparedStatement prst = connection.prepareStatement(FIND_BY_ID);
-            prst.setLong(1, id);
-            ResultSet rs = prst.executeQuery();
+            PreparedStatement ps = connection.prepareStatement(FIND_BY_ID);
+            ps.setLong(1, id);
+            ResultSet rs = ps.executeQuery();
 
             rs.first();
             todo = new Todo(rs.getLong(1), rs.getString("name"), rs.getString("description"));///----???
 
             rs.close();
-            prst.close();
+            ps.close();
             connection.close();
         }
         catch (SQLException e) {
@@ -72,14 +74,14 @@ public class JdbcTodoDaoImpl implements TodoDao {
 
         try {
             Connection connection = DriverManager.getConnection(URL, USER_NAME, PASSWORD);
-            Statement stm = connection.createStatement();
-            ResultSet rs = stm.executeQuery(SELECT_ALL);
+            Statement statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery(SELECT_ALL);
 
             while (rs.next()){
                 newCollection.add(new Todo(rs.getLong(1), rs.getString(2), rs.getString(3)));
             }
             rs.close();
-            stm.close();
+            statement.close();
             connection.close();
         }
         catch (SQLException e) {
@@ -92,16 +94,13 @@ public class JdbcTodoDaoImpl implements TodoDao {
     @Override
     public void update(Todo todo) {
 
-        try {
-            Connection connection = DriverManager.getConnection(URL, USER_NAME, PASSWORD);
-            PreparedStatement prst = connection.prepareStatement(UPDATE);
-            prst.setString(1, todo.getName());
-            prst.setString(2, todo.getDescription());
-            prst.setLong(3, todo.getId());
-            prst.executeUpdate();
+        try (Connection connection = DriverManager.getConnection(URL, USER_NAME, PASSWORD);
+             PreparedStatement ps = connection.prepareStatement(UPDATE);){
 
-            prst.close();
-            connection.close();
+            ps.setString(1, todo.getName());
+            ps.setString(2, todo.getDescription());
+            ps.setLong(3, todo.getId());
+            ps.executeUpdate();
         }
         catch (SQLException e) {
             System.out.println("mistake when update");
@@ -114,11 +113,11 @@ public class JdbcTodoDaoImpl implements TodoDao {
 
         try {
             Connection connection = DriverManager.getConnection(URL, USER_NAME, PASSWORD);
-            PreparedStatement prst = connection.prepareStatement(DELETE_BY_ID);
-            prst.setLong(1, id);
-            prst.executeUpdate();
+            PreparedStatement ps = connection.prepareStatement(DELETE_BY_ID);
+            ps.setLong(1, id);
+            ps.executeUpdate();
 
-            prst.close();
+            ps.close();
             connection.close();
         }
         catch (SQLException e) {

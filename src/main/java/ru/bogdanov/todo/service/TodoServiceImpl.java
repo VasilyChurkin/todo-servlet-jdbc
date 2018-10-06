@@ -13,7 +13,16 @@ import java.util.List;
  */
 public class TodoServiceImpl implements TodoService {
 
-    TodoDao todoDao = new JdbcTodoDaoImpl();
+    private static TodoService todoService = new TodoServiceImpl();
+
+    public static TodoService getInstance() {
+        return todoService;
+    }
+
+    private TodoServiceImpl() {
+    }
+
+    private TodoDao todoDao = new JdbcTodoDaoImpl();
 
     @Override
     public void add(Todo todo) {

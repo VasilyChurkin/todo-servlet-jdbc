@@ -24,8 +24,7 @@ public class TodoServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        //todoDao = new InMemoryTodoDaoImpl();
-        todoService = new TodoServiceImpl();
+        todoService = TodoServiceImpl.getInstance();
     }
 
     @Override
